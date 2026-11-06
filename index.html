@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcane Realm - 30-Day Deliberate Practice Quest Log</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts: Medieval & Modern Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        onyx: {
+                            DEFAULT: '#0B0B10',
+                            card: '#13131A',
+                            border: '#232332',
+                            light: '#1A1A24'
+                        },
+                        arcane: {
+                            purple: '#8B5CF6',
+                            lavender: '#C084FC',
+                            glow: '#A855F7',
+                            dark: '#4C1D95'
+                        },
+                        gold: {
+                            bright: '#F59E0B',
+                            light: '#FBBF24',
+                            dark: '#B45309',
+                            muted: '#D97706'
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #08080C;
+            color: #E2E8F0;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 75%),
+                radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        .rpg-card {
+            background: rgba(19, 19, 26, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(139, 92, 246, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .rpg-card:hover {
+            border-color: rgba(192, 132, 252, 0.45);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.2), inset 0 0 15px rgba(139, 92, 246, 0.1);
+        }
+
+        .rpg-card-gold {
+            background: rgba(19, 19, 26, 0.85);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .rpg-card-gold:hover {
+            border-color: rgba(251, 191, 36, 0.6);
+            box-shadow: 0 12px 40px rgba(245, 158, 11, 0.15);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 12px rgba(192, 132, 252, 0.6);
+        }
+        .glow-gold {
+            text-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0B10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232332;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8B5CF6;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(76, 29, 149, 0.4) 100%);
+            border-color: #C084FC;
+            color: #FFFFFF;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col pb-12">
+
+    <!-- Top Navigation & Stats Bar -->
+    <header class="sticky top-0 z-40 bg-onyx/90 backdrop-blur-md border-b border-onyx-border px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo & Level Banner -->
+            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-arcane-purple to-arcane-dark flex items-center justify-center border border-arcane-lavender/50 shadow-lg shadow-arcane-purple/30">
+                        <i data-lucide="shield" class="w-5 h-5 text-arcane-lavender"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-cinzel text-lg font-bold text-slate-100 tracking-wider flex items-center gap-2">
+                            ARCANE REALM <span class="text-xs px-2 py-0.5 rounded bg-arcane-purple/20 text-arcane-lavender border border-arcane-purple/30">Deliberate RPG</span>
+                        </h1>
+                        <p class="text-xs text-slate-400">Mastery Codex for <span class="text-arcane-lavender font-semibold">Chia</span></p>
+                    </div>
+                </div>
+
+                <!-- GCal Sync Indicator -->
+                <button id="gcalToggle" onclick="toggleGCalSync()" class="px-3 py-1.5 rounded-lg border border-onyx-border bg-onyx-light text-xs text-slate-400 hover:text-white flex items-center gap-2 transition-all">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                    <span id="gcalStatusText">Sync GCal: Off</span>
+                    <span id="gcalDot" class="w-2 h-2 rounded-full bg-slate-600"></span>
+                </button>
+            </div>
+
+            <!-- Player Status Indicators -->
+            <div class="flex items-center gap-4 sm:gap-6 w-full md:w-auto justify-around bg-onyx-card/80 p-2.5 rounded-xl border border-onyx-border">
+                
+                <!-- Level & XP -->
+                <div class="flex items-center gap-3">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-onyx-light border border-gold-muted/50">
+                        <span id="playerLevel" class="font-cinzel font-bold text-gold-light text-sm">Lv.1</span>
+                    </div>
+                    <div class="w-28 sm:w-36">
+                        <div class="flex justify-between text-xs mb-1 font-medium">
+                            <span class="text-slate-400">XP</span>
+                            <span id="xpText" class="text-gold-light">0 / 100</span>
+                        </div>
+                        <div class="w-full bg-onyx-light h-2 rounded-full overflow-hidden border border-onyx-border">
+                            <div id="xpBar" class="bg-gradient-to-r from-gold-muted to-gold-bright h-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Streak -->
+                <div class="flex items-center gap-2 border-l border-onyx-border pl-4 sm:pl-6">
+                    <div class="p-2 rounded-lg bg-red-950/40 text-red-400 border border-red-800/40">
+                        <i data-lucide="flame" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div id="streakDays" class="font-cinzel font-bold text-slate-100 text-sm">0 Days</div>
+                        <div class="text-[10px] text-slate-400">Active Streak</div>
+                    </div>
+                </div>
+
+                <!-- Current Week -->
+                <div class="flex items-center gap-2 border-l border-onyx-border pl-4 sm:pl-6">
+                    <div class="p-2 rounded-lg bg-arcane-purple/20 text-arcane-lavender border border-arcane-purple/30">
+                        <i data-lucide="compass" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div id="currentWeekDisplay" class="font-cinzel font-bold text-slate-100 text-sm">Week 1</div>
+                        <div class="text-[10px] text-slate-400">Reset & Focus</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 mt-6 flex-grow w-full">
+        
+        <!-- Navigation Tabs -->
+        <div class="flex overflow-x-auto gap-2 pb-2 mb-6 no-scrollbar border-b border-onyx-border">
+            <button onclick="switchTab('dailyQuests')" id="tab-dailyQuests" class="tab-btn active px-4 py-2.5 rounded-xl border border-onyx-border bg-onyx-card text-slate-400 hover:text-slate-200 text-sm font-medium flex items-center gap-2 transition-all shrink-0">
+                <i data-lucide="swords" class="w-4 h-4"></i>
+                Daily Quest Protocol (75m)
+            </button>
+            <button onclick="switchTab('journal')" id="tab-journal" class="tab-btn px-4 py-2.5 rounded-xl border border-onyx-border bg-onyx-card text-slate-400 hover:text-slate-200 text-sm font-medium flex items-center gap-2 transition-all shrink-0">
+                <i data-lucide="scroll" class="w-4 h-4"></i>
+                Thinking Journal
+            </button>
+            <button onclick="switchTab('roadmap')" id="tab-roadmap" class="tab-btn px-4 py-2.5 rounded-xl border border-onyx-border bg-onyx-card text-slate-400 hover:text-slate-200 text-sm font-medium flex items-center gap-2 transition-all shrink-0">
+                <i data-lucide="map" class="w-4 h-4"></i>
+                30-Day Campaign Plan
+            </button>
+            <button onclick="switchTab('eval')" id="tab-eval" class="tab-btn px-4 py-2.5 rounded-xl border border-onyx-border bg-onyx-card text-slate-400 hover:text-slate-200 text-sm font-medium flex items-center gap-2 transition-all shrink-0 relative">
+                <i data-lucide="sparkles" class="w-4 h-4 text-gold-light"></i>
+                Sunday Night Evaluation
+                <span class="w-2 h-2 rounded-full bg-gold-light animate-pulse"></span>
+            </button>
+            <button onclick="openRewardModal()" id="tab-reward" class="tab-btn px-4 py-2.5 rounded-xl border border-gold-muted/40 bg-onyx-card text-gold-light hover:text-white text-sm font-medium flex items-center gap-2 transition-all shrink-0">
+                <i data-lucide="gift" class="w-4 h-4 text-gold-bright"></i>
+                Claimable Rewards
+            </button>
+        </div>
+
+        <!-- TAB 1: DAILY QUESTS & PROOF UPLOAD -->
+        <div id="view-dailyQuests" class="tab-view space-y-6">
+            
+            <!-- Header Banner -->
+            <div class="rpg-card p-6 relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="z-10">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-arcane-lavender">Protocol Deliberate Practice</span>
+                    <h2 class="font-cinzel text-2xl font-bold text-white mt-1">Daily Mastery Quests</h2>
+                    <p class="text-sm text-slate-400 mt-1 max-w-xl">
+                        Selesaikan 5 quest harian (Total 75 min). Lampirkan bukti pengerjaan/catatan untuk klaim XP hari ini.
+                    </p>
+                </div>
+                <div class="z-10 flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="text-xs text-slate-400">Progress Quest Hari Ini</div>
+                        <div id="dailyCompletionRate" class="text-xl font-bold font-cinzel text-gold-light">0 / 5 Done</div>
+                    </div>
+                    <button onclick="resetDailyQuests()" class="p-2 rounded-lg bg-onyx-light border border-onyx-border text-slate-400 hover:text-red-400 transition-colors" title="Reset Quest Status">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <div class="absolute -right-8 -bottom-8 w-40 h-40 bg-arcane-purple/10 rounded-full blur-2xl pointer-events-none"></div>
+            </div>
+
+            <!-- Quests List Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="questsContainer">
+                <!-- Dynamically Populated by JS -->
+            </div>
+
+        </div>
+
+        <!-- TAB 2: THINKING JOURNAL -->
+        <div id="view-journal" class="tab-view hidden space-y-6">
+            <div class="rpg-card p-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-onyx-border pb-4 mb-6">
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-widest text-gold-light">Sistem Latihan Berpikir RPG</span>
+                        <h2 class="font-cinzel text-2xl font-bold text-white">Daily Thinking Codex</h2>
+                        <p class="text-sm text-slate-400 mt-1">
+                            Analisalah satu studi kasus harian secara mandiri sebelum meninjau rekomendasi taktis.
+                        </p>
+                    </div>
+                    <button onclick="generateNewCasePrompt()" class="px-4 py-2 rounded-lg bg-arcane-purple/20 border border-arcane-purple/40 text-arcane-lavender hover:bg-arcane-purple/30 text-sm font-semibold flex items-center gap-2 transition-all">
+                        <i data-lucide="dices" class="w-4 h-4"></i>
+                        Generate Random Case
+                    </button>
+                </div>
+
+                <!-- Case Prompt Display -->
+                <div class="p-4 rounded-xl bg-onyx border border-arcane-purple/30 mb-6">
+                    <div class="flex items-center gap-2 text-xs text-arcane-lavender font-bold uppercase mb-2">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i> Active Case Scenario
+                    </div>
+                    <p id="currentCasePrompt" class="text-slate-200 text-sm font-medium leading-relaxed italic">
+                        "Sebuah organisasi mahasiswa selalu terlambat menyerahkan Laporan Pertanggungjawaban (LPJ) setelah acara selesai. Ketua organisasi ingin langsung menghukum panitia karena dianggap tidak disiplin."
+                    </p>
+                </div>
+
+                <!-- User Analysis Input Form -->
+                <form id="journalForm" onsubmit="saveJournalEntry(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">1. Apa Masalah Utamanya?</label>
+                            <input type="text" id="j-problem" required placeholder="Contoh: Bukan sekadar kedisiplinan, tapi sistem alur dokumen yang rumit..." class="w-full bg-onyx border border-onyx-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-arcane-purple">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">2. Kemungkinan Penyebab Utama (Root Cause)</label>
+                            <input type="text" id="j-cause" required placeholder="Contoh: Tidak ada template kuitansi baku, bottleneck di sekretaris..." class="w-full bg-onyx border border-onyx-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-arcane-purple">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">3. Data Yang Perlu Dikumpulkan</label>
+                            <input type="text" id="j-data" required placeholder="Contoh: Data rata-rata durasi penyusunan LPJ per divisi..." class="w-full bg-onyx border border-onyx-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-arcane-purple">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">4. 3 Alternatif Solusi</label>
+                            <textarea id="j-solutions" rows="2" required placeholder="1. Buat Google Form input nota&#10;2. Tetapkan checklist harian H+1&#10;3. Sanksi batas waktu..." class="w-full bg-onyx border border-onyx-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-arcane-purple"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">5. Pertimbangan Risiko Solusi</label>
+                            <input type="text" id="j-risk" required placeholder="Contoh: Resistensi anggota di awal karena harus input digital..." class="w-full bg-onyx border border-onyx-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-arcane-purple">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1">6. Keputusan Akhir Kamu</label>
+                            <input type="text" id="j-decision" required placeholder="Pilih solusi #1 dengan masa uji coba 1 minggu." class="w-full bg-onyx border border-onyx-border rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-arcane-purple">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-arcane-purple to-arcane-dark border border-arcane-lavender/50 text-white font-semibold text-sm shadow-lg shadow-arcane-purple/30 hover:opacity-95 transition-all flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            Simpan Ke Journal (+30 XP)
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Journal Past Logs -->
+            <div class="rpg-card p-6">
+                <h3 class="font-cinzel text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-arcane-lavender"></i>
+                    Catatan Thinking Journal Terakhir
+                </h3>
+                <div id="journalHistoryContainer" class="space-y-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: 30-DAY CAMPAIGN ROADMAP -->
+        <div id="view-roadmap" class="tab-view hidden space-y-6">
+            <div class="rpg-card p-6">
+                <span class="text-xs font-semibold uppercase tracking-widest text-arcane-lavender">Kurikulum Deliberate Practice</span>
+                <h2 class="font-cinzel text-2xl font-bold text-white mt-1">Peta Rencana 30 Hari</h2>
+                <p class="text-sm text-slate-400 mt-1">
+                    Pendekatan bertahap dari fondasi hingga penguasaan output konkret.
+                </p>
+
+                <!-- Week Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    
+                    <!-- Week 1 -->
+                    <div class="p-5 rounded-xl bg-onyx border border-arcane-purple/40 relative">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-arcane-purple/20 text-arcane-lavender border border-arcane-purple/30">Minggu 1</span>
+                            <span class="text-xs text-slate-400">Fondasi</span>
+                        </div>
+                        <h4 class="font-cinzel font-bold text-slate-100 text-lg">Reset & Membangun Kesadaran</h4>
+                        <ul class="text-xs text-slate-300 space-y-2 mt-3 list-disc list-inside">
+                            <li>Batasi scrolling dengan waktu khusus sosmed.</li>
+                            <li>25 menit sehari membaca/belajar tanpa gangguan.</li>
+                            <li>Tulis 1 pemikiran / pendapat setiap hari.</li>
+                            <li>Selesaikan tugas kecil sebelum membuka sosmed.</li>
+                        </ul>
+                        <div class="mt-4 p-2.5 rounded-lg bg-onyx-light border border-onyx-border text-[11px] text-arcane-lavender italic">
+                            💡 Latihan Utama: Tanyakan "apa maksudnya, mengapa terjadi, dan apa pendapatku?"
+                        </div>
+                    </div>
+
+                    <!-- Week 2 -->
+                    <div class="p-5 rounded-xl bg-onyx border border-onyx-border relative">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-onyx-light text-slate-400 border border-onyx-border">Minggu 2</span>
+                            <span class="text-xs text-slate-400">Processing</span>
+                        </div>
+                        <h4 class="font-cinzel font-bold text-slate-100 text-lg">Melatih Critical Thinking</h4>
+                        <ul class="text-xs text-slate-300 space-y-2 mt-3 list-disc list-inside">
+                            <li>Baca 1 artikel/materi tantangan.</li>
+                            <li>Identifikasi klaim, bukti, dan asumsi penulis.</li>
+                            <li>Coba berikan sudut pandang berbeda.</li>
+                            <li>Buat kesimpulan dengan bahasa sendiri.</li>
+                        </ul>
+                        <div class="mt-4 p-2.5 rounded-lg bg-onyx-light border border-onyx-border text-[11px] text-gold-light italic">
+                            💡 Latihan Utama: Lanjutkan "apa" dengan "mengapa" dan "bagaimana".
+                        </div>
+                    </div>
+
+                    <!-- Week 3 -->
+                    <div class="p-5 rounded-xl bg-onyx border border-onyx-border relative">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-onyx-light text-slate-400 border border-onyx-border">Minggu 3</span>
+                            <span class="text-xs text-slate-400">Analysis</span>
+                        </div>
+                        <h4 class="font-cinzel font-bold text-slate-100 text-lg">Melatih Problem Solving</h4>
+                        <ul class="text-xs text-slate-300 space-y-2 mt-3 list-disc list-inside">
+                            <li>Ambil 1 masalah nyata kuliah/organisasi.</li>
+                            <li>Identifikasi akar masalahnya (Root cause).</li>
+                            <li>Susun minimal 3 alternatif solusi.</li>
+                            <li>Pertimbangkan risiko & buat keputusan.</li>
+                        </ul>
+                        <div class="mt-4 p-2.5 rounded-lg bg-onyx-light border border-onyx-border text-[11px] text-arcane-lavender italic">
+                            💡 Latihan Utama: Jangan cari jawaban orang lain sebelum buat analisis sendiri.
+                        </div>
+                    </div>
+
+                    <!-- Week 4 -->
+                    <div class="p-5 rounded-xl bg-onyx border border-onyx-border relative">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-onyx-light text-slate-400 border border-onyx-border">Minggu 4</span>
+                            <span class="text-xs text-slate-400">Output</span>
+                        </div>
+                        <h4 class="font-cinzel font-bold text-slate-100 text-lg">Membangun Kompetensi Concrete</h4>
+                        <ul class="text-xs text-slate-300 space-y-2 mt-3 list-disc list-inside">
+                            <li>Pilih 1 skill utama (Python / SQL / Data Analysis).</li>
+                            <li>Tentukan 1 hasil konkret yang ingin dibuat.</li>
+                            <li>Belajar dan praktik secara konsisten.</li>
+                            <li>Presentasikan/jelaskan hasilnya ke orang lain.</li>
+                        </ul>
+                        <div class="mt-4 p-2.5 rounded-lg bg-onyx-light border border-onyx-border text-[11px] text-gold-light italic">
+                            💡 Latihan Utama: Menghasilkan sesuatu, bukan sekadar mengonsumsi materi.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SUNDAY NIGHT EVALUATION & DECISION SYSTEM -->
+        <div id="view-eval" class="tab-view hidden space-y-6">
+            
+            <div class="rpg-card-gold rpg-card p-6">
+                <div class="flex items-center gap-3 border-b border-onyx-border pb-4 mb-6">
+                    <div class="p-3 rounded-xl bg-gold-dark/20 text-gold-bright border border-gold-muted/40">
+                        <i data-lucide="hourglass" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-widest text-gold-light">Evaluasi Mingguan Otomatis</span>
+                        <h2 class="font-cinzel text-2xl font-bold text-white">Sunday Night Council</h2>
+                        <p class="text-sm text-slate-400">
+                            Setiap Minggu malam, sistem menganalisis performa belajar dan membantumu mengambil keputusan pemulihan.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Stats Summary Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="p-4 rounded-xl bg-onyx border border-onyx-border text-center">
+                        <div class="text-xs text-slate-400">Total Sesi Selesai</div>
+                        <div id="evalTotalCompleted" class="text-2xl font-bold font-cinzel text-arcane-lavender mt-1">0 Quest</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-onyx border border-onyx-border text-center">
+                        <div class="text-xs text-slate-400">Rata-rata Konsistensi</div>
+                        <div id="evalConsistency" class="text-2xl font-bold font-cinzel text-gold-light mt-1">0%</div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-onyx border border-onyx-border text-center">
+                        <div class="text-xs text-slate-400">Status Pekan Ini</div>
+                        <div id="evalStatusBadge" class="text-sm font-bold font-cinzel text-emerald-400 mt-2">Perlu Evaluasi</div>
+                    </div>
+                </div>
+
+                <!-- Evaluation Quiz Form -->
+                <form id="evalForm" onsubmit="submitSundayEval(event)" class="space-y-5">
+                    
+                    <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider border-b border-onyx-border pb-2">
+                        1. Hambatan Utama Minggu Ini (Pilih yang paling relevan)
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <label class="flex items-center gap-3 p-3 rounded-xl bg-onyx border border-onyx-border hover:border-arcane-purple cursor-pointer transition-colors">
+                            <input type="radio" name="obstacle" value="busy_college" required class="text-arcane-purple focus:ring-0">
+                            <div>
+                                <div class="text-xs font-semibold text-slate-200">Padat Jadwal Kuliah / Panitia</div>
+                                <div class="text-[11px] text-slate-400">Waktu habis untuk tugas kuliah & rapat</div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3 rounded-xl bg-onyx border border-onyx-border hover:border-arcane-purple cursor-pointer transition-colors">
+                            <input type="radio" name="obstacle" value="distraction" class="text-arcane-purple focus:ring-0">
+                            <div>
+                                <div class="text-xs font-semibold text-slate-200">Terdistraksi Sosmed / Scrolling</div>
+                                <div class="text-[11px] text-slate-400">Kesulitan mulai fokus 25 menit pertama</div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3 rounded-xl bg-onyx border border-onyx-border hover:border-arcane-purple cursor-pointer transition-colors">
+                            <input type="radio" name="obstacle" value="low_energy" class="text-arcane-purple focus:ring-0">
+                            <div>
+                                <div class="text-xs font-semibold text-slate-200">Kelelahan / Low Energy</div>
+                                <div class="text-[11px] text-slate-400">Kondisi fisik/mental burnout</div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center gap-3 p-3 rounded-xl bg-onyx border border-onyx-border hover:border-arcane-purple cursor-pointer transition-colors">
+                            <input type="radio" name="obstacle" value="perfect" class="text-arcane-purple focus:ring-0">
+                            <div>
+                                <div class="text-xs font-semibold text-slate-200">Lancar & Konsisten</div>
+                                <div class="text-[11px] text-slate-400">Berhasil capai mayoritas target harian</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Mandatory Introspection -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-200 mb-1">
+                            2. Jelaskan Alasan & Apa 1 Hal Yang Akan Kamu Perbaiki Minggu Depan? *
+                        </label>
+                        <textarea id="evalReasonInput" rows="3" required placeholder="Tuliskan alasan sejujurnya di sini. Kenapa target belum tercapai atau apa penyesuaian strategi kamu..." class="w-full bg-onyx border border-onyx-border rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-gold-light"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-gold-muted to-gold-bright text-onyx font-bold text-sm hover:brightness-110 shadow-lg shadow-gold-bright/20 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        Generate Keputusan & Penyesuaian Sistem Pekan Depan
+                    </button>
+                </form>
+
+                <!-- System Decision Output Display -->
+                <div id="evalResultContainer" class="hidden mt-6 p-5 rounded-xl bg-onyx border border-gold-light/40 space-y-3">
+                    <div class="flex items-center gap-2 text-gold-light text-sm font-bold uppercase">
+                        <i data-lucide="award" class="w-5 h-5"></i> Keputusan & Strategic Guidance Sistem
+                    </div>
+                    <div id="evalDecisionText" class="text-slate-200 text-sm leading-relaxed">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Past Evaluation Logs -->
+            <div class="rpg-card p-6">
+                <h3 class="font-cinzel text-lg font-bold text-slate-200 mb-4">Riwayat Evaluasi Pekanan</h3>
+                <div id="evalHistoryContainer" class="space-y-3">
+                    <p class="text-xs text-slate-500 italic">Belum ada evaluasi yang disimpan.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- PROOF UPLOAD & COMPLETE MODAL (FIXED & COMPLETE) -->
+    <div id="proofModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="rpg-card max-w-md w-full p-6 space-y-4 border-arcane-purple">
+            <div class="flex justify-between items-center border-b border-onyx-border pb-3">
+                <h3 class="font-cinzel font-bold text-slate-100 text-lg flex items-center gap-2">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 text-arcane-lavender"></i>
+                    Upload Bukti Quest
+                </h3>
+                <button onclick="closeProofModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <p id="proofQuestTitle" class="text-xs font-semibold text-arcane-lavender">Quest: Belajar Skill Utama</p>
+            
+            <div class="space-y-3">
+                <!-- Option 1: File Upload (Foto/Screenshot) -->
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">1. Upload Foto / Screenshot Bukti</label>
+                    <input type="file" id="modalProofFile" accept="image/*" onchange="previewProofImage(event)" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-arcane-purple/20 file:text-arcane-lavender hover:file:bg-arcane-purple/30 cursor-pointer">
+                </div>
+
+                <!-- Image Preview Box -->
+                <div id="imagePreviewBox" class="hidden">
+                    <img id="imgPreview" src="" alt="Preview Bukti" class="w-full h-32 object-cover rounded-lg border border-onyx-border">
+                </div>
+
+                <!-- Option 2: Link / Text Note -->
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">2. Catatan Ringkas / Link GDrive (Opsional)</label>
+                    <input type="text" id="modalProofNote" placeholder="https://drive.google.com/... atau deskripsi ringkas" class="w-full bg-onyx border border-onyx-border rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-arcane-purple">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-2 pt-2 border-t border-onyx-border">
+                <button onclick="closeProofModal()" class="px-4 py-2 rounded-lg bg-onyx border border-onyx-border text-xs text-slate-300 hover:text-white font-medium">Batal</button>
+                <button onclick="submitQuestProof()" class="px-4 py-2 rounded-lg bg-arcane-purple text-white text-xs font-bold hover:bg-arcane-dark shadow-lg shadow-arcane-purple/30 font-cinzel">Submit Bukti & Klaim XP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VICTORY REWARD POPUP MODAL -->
+    <div id="victoryModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 animate-fade-in">
+        <div class="rpg-card-gold rpg-card max-w-lg w-full p-6 text-center space-y-5 relative overflow-hidden border-2 border-gold-bright shadow-2xl shadow-gold-bright/20">
+            <!-- Background Glow FX -->
+            <div class="absolute -top-12 -left-12 w-40 h-40 bg-gold-bright/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-arcane-purple/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex justify-center">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-gold-dark via-gold-bright to-yellow-200 flex items-center justify-center border-2 border-gold-light shadow-lg shadow-gold-bright/40 animate-bounce">
+                    <i data-lucide="gift" class="w-10 h-10 text-onyx"></i>
+                </div>
+            </div>
+
+            <div class="space-y-1">
+                <span class="text-xs font-bold uppercase tracking-widest text-gold-light glow-gold">✨ QUEST MASTERED! ✨</span>
+                <h2 class="font-cinzel text-2xl font-black text-white tracking-wide">VICTORY UNLOCKED!</h2>
+                <p class="text-sm text-slate-300 pt-1">
+                    Selamat, Chia! Kamu berhasil menyelesaikan semua target quest hari ini dengan disiplin penuh!
+                </p>
+            </div>
+
+            <!-- Reward Display Box -->
+            <div class="p-4 rounded-xl bg-onyx border border-gold-muted/50 text-left space-y-2">
+                <div class="flex items-center gap-2 text-gold-bright text-xs font-bold uppercase">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i> Real Life Reward Kamu Hari Ini:
+                </div>
+                <div id="activeRewardText" class="text-base font-bold text-slate-100 font-cinzel">
+                    ☕ 1 Cangkir Coffee / Matcha Favorit + Time Out Rest 30 Menit!
+                </div>
+                <p class="text-xs text-slate-400 italic">"Kamu berhak menikmati reward ini tanpa rasa bersalah (guilt-free). Dirimu layak mendapatkannya!"</p>
+            </div>
+
+            <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                <button onclick="closeVictoryModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-gold-muted to-gold-bright text-onyx font-bold text-sm shadow-lg shadow-gold-bright/30 hover:brightness-110 transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    Klaim Reward & Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Default Master Data Strategy
+        const QUEST_DATA = [
+            {
+                id: 'q1',
+                title: '1 Materi Kuliah (Sains Data)',
+                duration: '30 min',
+                xp: 25,
+                icon: 'book-open',
+                desc: 'Pelajari 1 topik/materi perkuliahan hari ini (Python/SQL/Statistika).'
+            },
+            {
+                id: 'q2',
+                title: 'Focus & Reading No-Scrolling',
+                duration: '25 min',
+                xp: 20,
+                icon: 'brain-circuit',
+                desc: 'Membaca atau belajar penuh tanpa distraksi media sosial.'
+            },
+            {
+                id: 'q3',
+                title: 'Critical Thinking Exercise',
+                duration: '15 min',
+                xp: 15,
+                icon: 'help-circle',
+                desc: 'Tanyakan: Apa maksudnya, mengapa terjadi, dan apa pendapatku?'
+            },
+            {
+                id: 'q4',
+                title: 'Main Skill Practice (Data/Python)',
+                duration: '30 min',
+                xp: 30,
+                icon: 'code',
+                desc: 'Praktek coding Python, SQL query, atau analisis data konkret.'
+            },
+            {
+                id: 'q5',
+                title: 'Daily Reflection & Thinking Codex',
+                duration: '10 min',
+                xp: 10,
+                icon: 'pen-tool',
+                desc: 'Isi jurnal pemikiran harian atau jawab 1 studi kasus di tab Journal.'
+            }
+        ];
+
+        const CASE_PROMPTS = [
+            "Sebuah organisasi mahasiswa selalu terlambat menyerahkan LPJ setelah acara selesai. Ketua organisasi ingin langsung menghukum panitia karena dianggap tidak disiplin.",
+            "Tim project data kamu mengalami penurunan keakuratan model machine learning di server produksi, padahal di local environment berjalan 99% akurat.",
+            "Kamu merasa kewalahan membagi waktu antara kepanitiaan yang sangat padat dan tugas kuliah Sains Data yang butuh pemahaman mendalam.",
+            "Sebuah startup media sosial mendeteksi bahwa waktu luang pengguna berkurang 40% setelah meluncurkan fitur baru. Bagaimana kamu menganalisis penyebabnya?"
+        ];
+
+        // State Management
+        let appState = {
+            xp: 0,
+            level: 1,
+            streak: 1,
+            currentWeek: 1,
+            gcalSynced: false,
+            quests: {}, // { dateKey: { questId: { done: true, proofNote: '', proofImg: '' } } }
+            journals: [], // Array of journal entries
+            evaluations: [] // Array of weekly evaluation logs
+        };
+
+        let activeModalQuestId = null;
+        let tempPreviewImg = '';
+
+        // Initialization
+        window.onload = function() {
+            loadStateFromStorage();
+            renderQuests();
+            renderJournalHistory();
+            renderEvaluationHistory();
+            updateUIStats();
+            lucide.createIcons();
+        };
+
+        function getTodayKey() {
+            const today = new Date();
+            return today.toISOString().split('T')[0];
+        }
+
+        // Storage Management
+        function saveStateToStorage() {
+            localStorage.setItem('arcane_tracker_chia', JSON.stringify(appState));
+        }
+
+        function loadStateFromStorage() {
+            const stored = localStorage.getItem('arcane_tracker_chia');
+            if (stored) {
+                try {
+                    appState = { ...appState, ...JSON.parse(stored) };
+                } catch(e) {
+                    console.error("Failed to parse storage", e);
+                }
+            }
+        }
+
+        // Navigation Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // Quest Rendering & Logic
+        function renderQuests() {
+            const container = document.getElementById('questsContainer');
+            container.innerHTML = '';
+            
+            const todayKey = getTodayKey();
+            const todayQuests = appState.quests[todayKey] || {};
+
+            let completedCount = 0;
+
+            QUEST_DATA.forEach(q => {
+                const questState = todayQuests[q.id] || { done: false, proofNote: '', proofImg: '' };
+                if (questState.done) completedCount++;
+
+                const card = document.createElement('div');
+                card.className = `rpg-card p-4 flex flex-col justify-between space-y-3 ${questState.done ? 'border-emerald-500/40 bg-emerald-950/10' : ''}`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-start gap-3">
+                            <div class="p-2.5 rounded-xl ${questState.done ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-arcane-purple/20 text-arcane-lavender border border-arcane-purple/30'}">
+                                <i data-lucide="${q.icon}" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-100 text-sm flex items-center gap-2">
+                                    ${q.title}
+                                    <span class="text-[10px] px-2 py-0.5 rounded bg-onyx border border-onyx-border text-slate-400 font-normal">${q.duration}</span>
+                                </h4>
+                                <p class="text-xs text-slate-400 mt-1">${q.desc}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold font-cinzel text-gold-light bg-gold-dark/20 border border-gold-muted/30 px-2.5 py-1 rounded-full shrink-0">
+                            +${q.xp} XP
+                        </span>
+                    </div>
+
+                    ${questState.done ? `
+                        <div class="p-2.5 rounded-lg bg-onyx border border-onyx-border text-xs text-slate-300 space-y-1">
+                            <div class="flex items-center justify-between text-emerald-400 font-semibold text-[11px]">
+                                <span class="flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Selesai dengan Bukti</span>
+                                <button onclick="openProofModal('${q.id}')" class="text-slate-400 hover:text-white underline text-[10px]">Edit Bukti</button>
+                            </div>
+                            ${questState.proofNote ? `<p class="italic text-slate-400 truncate">"${questState.proofNote}"</p>` : ''}
+                            ${questState.proofImg ? `<img src="${questState.proofImg}" class="h-16 rounded border border-onyx-border object-cover mt-1">` : ''}
+                        </div>
+                    ` : `
+                        <div class="flex justify-end items-center gap-2 pt-1">
+                            <button onclick="quickCompleteQuest('${q.id}')" class="px-3 py-2 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 hover:bg-emerald-500 hover:text-onyx font-semibold text-xs transition-all flex items-center gap-1">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Check
+                            </button>
+                            <button onclick="openProofModal('${q.id}')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-arcane-purple/20 border border-arcane-purple/40 text-arcane-lavender hover:bg-arcane-purple hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Submit Bukti & Complete
+                            </button>
+                        </div>
+                    `}
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('dailyCompletionRate').innerText = `${completedCount} / ${QUEST_DATA.length} Done`;
+            lucide.createIcons();
+        }
+
+        // Modal Handler
+        function openProofModal(questId) {
+            activeModalQuestId = questId;
+            const q = QUEST_DATA.find(item => item.id === questId);
+            document.getElementById('proofQuestTitle').innerText = `Quest: ${q.title}`;
+            
+            const todayKey = getTodayKey();
+            const existing = (appState.quests[todayKey] && appState.quests[todayKey][questId]) || {};
+            
+            document.getElementById('modalProofNote').value = existing.proofNote || '';
+            document.getElementById('imagePreviewBox').classList.add('hidden');
+            document.getElementById('modalProofFile').value = '';
+            tempPreviewImg = existing.proofImg || '';
+
+            if (tempPreviewImg) {
+                document.getElementById('imgPreview').src = tempPreviewImg;
+                document.getElementById('imagePreviewBox').classList.remove('hidden');
+            }
+
+            document.getElementById('proofModal').classList.remove('hidden');
+        }
+
+        function closeProofModal() {
+            document.getElementById('proofModal').classList.add('hidden');
+            activeModalQuestId = null;
+        }
+
+        function previewProofImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempPreviewImg = e.target.result;
+                    document.getElementById('imgPreview').src = tempPreviewImg;
+                    document.getElementById('imagePreviewBox').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function submitQuestProof() {
+            if (!activeModalQuestId) return;
+
+            const todayKey = getTodayKey();
+            const note = document.getElementById('modalProofNote').value.trim();
+            const q = QUEST_DATA.find(item => item.id === activeModalQuestId);
+
+            if (!appState.quests[todayKey]) appState.quests[todayKey] = {};
+
+            const wasAlreadyDone = appState.quests[todayKey][activeModalQuestId]?.done;
+
+            appState.quests[todayKey][activeModalQuestId] = {
+                done: true,
+                proofNote: note,
+                proofImg: tempPreviewImg
+            };
+
+            if (!wasAlreadyDone && q) {
+                addXP(q.xp);
+            }
+
+            saveStateToStorage();
+            renderQuests();
+            closeProofModal();
+
+            // Check if ALL daily quests are now completed!
+            checkAllDailyQuestsCompleted();
+        }
+
+        function quickCompleteQuest(questId) {
+            const todayKey = getTodayKey();
+            const q = QUEST_DATA.find(item => item.id === questId);
+
+            if (!appState.quests[todayKey]) appState.quests[todayKey] = {};
+
+            const wasAlreadyDone = appState.quests[todayKey][questId]?.done;
+
+            appState.quests[todayKey][questId] = {
+                done: true,
+                proofNote: 'Completed via Quick Check-in',
+                proofImg: ''
+            };
+
+            if (!wasAlreadyDone && q) {
+                addXP(q.xp);
+            }
+
+            saveStateToStorage();
+            renderQuests();
+            checkAllDailyQuestsCompleted();
+        }
+
+        function checkAllDailyQuestsCompleted() {
+            const todayKey = getTodayKey();
+            const todayQuests = appState.quests[todayKey] || {};
+            const completedCount = Object.values(todayQuests).filter(q => q.done).length;
+
+            if (completedCount === QUEST_DATA.length) {
+                triggerVictoryRewardModal();
+            }
+        }
+
+        function triggerVictoryRewardModal() {
+            // Trigger Gold Confetti Shower
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#F59E0B', '#FBBF24', '#8B5CF6', '#C084FC']
+            });
+
+            document.getElementById('victoryModal').classList.remove('hidden');
+        }
+
+        function closeVictoryModal() {
+            document.getElementById('victoryModal').classList.add('hidden');
+        }
+
+        function openRewardModal() {
+            triggerVictoryRewardModal();
+        }
+
+        function resetDailyQuests() {
+            const todayKey = getTodayKey();
+            if (appState.quests[todayKey]) {
+                delete appState.quests[todayKey];
+                saveStateToStorage();
+                renderQuests();
+            }
+        }
+
+        // XP & Level Progression
+        function addXP(amount) {
+            appState.xp += amount;
+            if (appState.xp >= 100) {
+                appState.level += Math.floor(appState.xp / 100);
+                appState.xp = appState.xp % 100;
+                confetti({ particleCount: 120, spread: 100 });
+            }
+            updateUIStats();
+        }
+
+        function updateUIStats() {
+            document.getElementById('playerLevel').innerText = `Lv.${appState.level}`;
+            document.getElementById('xpText').innerText = `${appState.xp} / 100`;
+            document.getElementById('xpBar').style.width = `${appState.xp}%`;
+            document.getElementById('streakDays').innerText = `${appState.streak} Days`;
+            document.getElementById('currentWeekDisplay').innerText = `Week ${appState.currentWeek}`;
+        }
+
+        // Thinking Journal System
+        function generateNewCasePrompt() {
+            const randomCase = CASE_PROMPTS[Math.floor(Math.random() * CASE_PROMPTS.length)];
+            document.getElementById('currentCasePrompt').innerText = `"${randomCase}"`;
+        }
+
+        function saveJournalEntry(e) {
+            e.preventDefault();
+            const entry = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }),
+                caseText: document.getElementById('currentCasePrompt').innerText,
+                problem: document.getElementById('j-problem').value,
+                cause: document.getElementById('j-cause').value,
+                data: document.getElementById('j-data').value,
+                solutions: document.getElementById('j-solutions').value,
+                risk: document.getElementById('j-risk').value,
+                decision: document.getElementById('j-decision').value
+            };
+
+            appState.journals.unshift(entry);
+            addXP(30);
+            saveStateToStorage();
+
+            document.getElementById('journalForm').reset();
+            renderJournalHistory();
+            alert("Jurnal analisis berhasil disimpan! (+30 XP)");
+        }
+
+        function renderJournalHistory() {
+            const container = document.getElementById('journalHistoryContainer');
+            if (appState.journals.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 italic">Belum ada jurnal tersimpan.</p>`;
+                return;
+            }
+
+            container.innerHTML = appState.journals.map(j => `
+                <div class="p-4 rounded-xl bg-onyx border border-onyx-border space-y-2">
+                    <div class="flex justify-between items-center text-xs text-arcane-lavender font-semibold">
+                        <span>${j.date}</span>
+                        <span class="text-gold-light font-cinzel">+30 XP</span>
+                    </div>
+                    <p class="text-xs italic text-slate-400 border-l-2 border-arcane-purple pl-2">${j.caseText}</p>
+                    <div class="text-xs text-slate-300 space-y-1 pt-1">
+                        <div><strong>Akar Masalah:</strong> ${j.cause}</div>
+                        <div><strong>Keputusan Akhir:</strong> ${j.decision}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Sunday Night Evaluation Engine
+        function submitSundayEval(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const obstacle = formData.get('obstacle');
+            const reason = document.getElementById('evalReasonInput').value;
+
+            let decisionAdvice = "";
+
+            switch(obstacle) {
+                case 'busy_college':
+                    decisionAdvice = "<strong>Keputusan Sistem (Minimum Mode):</strong> Karena jadwal perkuliahan & kepanitiaan sangat padat minggu ini, sistem mengaktifkan <em>Versi 20-Menit Minimum</em> untuk minggu depan. Fokus utama dialihkan ke 1 Materi Kuliah (15m) + Menulis Refleksi (5m). Jangan sampai berhenti total!";
+                    break;
+                case 'distraction':
+                    decisionAdvice = "<strong>Keputusan Sistem (Distraction Shield):</strong> Ditemukan kendala pada fokus scrolling. Gunakan teknik <em>Pomodoro 25 Menit Saja</em>. Sebelum sosmed dibuka, kamu wajib menyelesaikan tugas paling kecil terlebih dahulu.";
+                    break;
+                case 'low_energy':
+                    decisionAdvice = "<strong>Keputusan Sistem (Energy Reset):</strong> Kondisi tubuh/pikiran butuh pemulihan. Luangkan 1 hari penuh untuk rest total tanpa guilt, kemudian mulai kembali dengan habit 10 menit reflection harian.";
+                    break;
+                default:
+                    decisionAdvice = "<strong>Keputusan Sistem (Level Up!):</strong> Performa kamu sangat stabil! Pertahankan ritme ini dan naikkan intensitas pada <em>Skill Utama (Python/SQL)</em> menjadi 40 menit per sesi.";
+            }
+
+            const evalLog = {
+                date: new Date().toLocaleDateString('id-ID'),
+                week: appState.currentWeek,
+                obstacle,
+                reason,
+                decision: decisionAdvice
+            };
+
+            appState.evaluations.unshift(evalLog);
+            saveStateToStorage();
+
+            document.getElementById('evalDecisionText').innerHTML = decisionAdvice;
+            document.getElementById('evalResultContainer').classList.remove('hidden');
+
+            renderEvaluationHistory();
+        }
+
+        function renderEvaluationHistory() {
+            const container = document.getElementById('evalHistoryContainer');
+            if (appState.evaluations.length === 0) return;
+
+            container.innerHTML = appState.evaluations.map(ev => `
+                <div class="p-3 rounded-lg bg-onyx border border-onyx-border text-xs space-y-1">
+                    <div class="flex justify-between font-bold text-gold-light">
+                        <span>Evaluasi Minggu ke-${ev.week}</span>
+                        <span>${ev.date}</span>
+                    </div>
+                    <p class="text-slate-400">Refleksi: "${ev.reason}"</p>
+                </div>
+            `).join('');
+        }
+
+        // Google Calendar Toggle Simulation
+        function toggleGCalSync() {
+            appState.gcalSynced = !appState.gcalSynced;
+            const text = document.getElementById('gcalStatusText');
+            const dot = document.getElementById('gcalDot');
+
+            if (appState.gcalSynced) {
+                text.innerText = "Sync GCal: Active";
+                dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+            } else {
+                text.innerText = "Sync GCal: Off";
+                dot.className = "w-2 h-2 rounded-full bg-slate-600";
+            }
+            saveStateToStorage();
+        }
+    </script>
+</body>
+</html>
